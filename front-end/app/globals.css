@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+/* global.css */
+body {
+  @apply bg-gray-100 text-gray-900;
+}
+.login-container, .register-container {
+  @apply max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg mt-10;
+}
+input {
+  @apply w-full p-2 mb-4 border border-gray-300 rounded;
+}
+button {
+  @apply w-full p-2 bg-blue-500 text-white rounded;
+}
+/* Animation for fade in from the top */
+@keyframes fadeInTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation for fade in from the bottom */
+@keyframes fadeInBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* General animation classes */
+.fade-in-top {
+  animation: fadeInTop 0.7s ease-in forwards;
+  opacity: 0;
+}
+
+.fade-in-bottom {
+  animation: fadeInBottom 0.7s ease-in forwards;
+  opacity: 0;
+}
+
+.custom-scrollbar {
+  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+.custom-scrollbar::-webkit-scrollbar { 
+  width: 0;
+  height: 0;
+  display: none;  /* Chrome, Safari, Opera */
+}
+
+.fade-in-left {
+  animation: fadeInLeft 0.7s ease-in forwards;
+  opacity: 0;
+}
+@keyframes fadeInLeft {
+  0% {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+/* Pop-up animation */
+@keyframes popUp {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pop-up {
+  animation: popUp 0.3s ease-in-out forwards;
+  opacity: 0;
+}

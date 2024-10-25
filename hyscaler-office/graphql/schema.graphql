@@ -1,0 +1,226 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar Upload @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Upload")
+
+
+    type User {
+        id: ID!
+        name: String!
+        email: String!
+        activation_status: Boolean!  # Add this line
+        posts: [UserPost!]! @hasMany
+        comments: [UserComment!]! @hasMany
+        sentConnections: [UserConnection!]! @hasMany
+        receivedConnections: [UserConnection!]! @hasMany
+        userProfile: UserProfile @hasOne  # Link to the UserProfile type
+        active_connections: [User!]! @field(resolver: "App\\GraphQL\\Queries\\ConnectionQuery@getActiveConnections")
+
+
+    }
+
+type UserConnection {
+    id: ID!
+    sender: User! @belongsTo
+    receiver: User! @belongsTo
+    status: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type ConnectionResponse {
+    status: Boolean!
+    message: String!
+}
+
+type UserPost {
+    id: ID!
+    description: String!
+image_path: String
+    image_path2: String
+    image_path3: String
+    image_path4: String
+    user: User! @belongsTo
+    comments: [UserComment!]! @hasMany(scopes: ["masterCommentsOnly"])
+    liked: Boolean!
+    likesCount: Int! @count(relation: "likes")
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+
+type UserPostResponse {
+    status: Boolean!
+    message: String!
+    userPost: UserPost
+}
+
+type DeleteUserPostResponse {
+    status: Boolean!
+    message: String!
+}
+
+
+type UserComment {
+    id: ID!
+    content: String!
+    user: User! @belongsTo
+    post: UserPost! @belongsTo(relation: "post")
+    master_comment_id: ID
+    userProfile: UserProfile @hasOne 
+    nestedComments: [UserComment!]! @hasMany(relation: "nestedComments")
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+
+type NestedComment {
+    id: ID!
+    content: String!
+    user: User! @belongsTo
+    post: UserPost! @belongsTo(relation: "post")
+    masterComment: UserComment @belongsTo
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type CommentResponse {
+    status: Boolean!
+    message: String!
+    comment: UserComment
+}
+
+union LikeableItem = UserPost | UserComment | NestedComment
+
+type LikeResponse {
+  status: Boolean!
+  message: String!
+  liked: Boolean
+  likedItem: LikeableItem
+}
+
+
+type AuthPayload {
+    status: Boolean!
+    message: String!
+    user: User
+    token: String
+}
+
+type Query {
+    allPosts(limit: Int, offset: Int): [UserPost!]! @field(resolver: "UserPostQuery@getAllPosts")
+
+    user(id: ID! @eq): User @find
+    userPosts(user_id: ID! @eq): [UserPost!]! @field(resolver: "UserPostQuery@getUserPosts")
+    postComments(user_post_id: ID! @eq): [UserComment!]! @field(resolver: "CommentQuery@getPostComments")
+    Friend_Requests: [UserConnection!]! @field(resolver: "ConnectionQuery@getFriendRequests")
+    friendSuggestions: [User!]! @field(resolver: "ConnectionQuery@getFriendSuggestions")
+        active_connections(user_id: ID! @eq): [User!]! @field(resolver: "App\\GraphQL\\Queries\\ConnectionQuery@getActiveConnections")
+    active_connections_auth: [User!]! @field(resolver: "App\\GraphQL\\Queries\\ConnectionQuery@activeConnectionsAuth")
+    userProfile(user_id: ID! @eq): UserProfile @first
+
+}
+
+type LikeResponse {
+    status: Boolean!
+    message: String!
+    likedItem: LikeableItem
+    liked: Boolean
+}
+
+type FriendRequestResponse {
+    status: Boolean!
+    message: String!
+}
+
+type MessageResponse {
+    status: Boolean!
+    message: String!
+}
+
+type Mutation {
+    register(
+        name: String!
+        email: String!
+        password: String!
+    ): AuthPayload! @field(resolver: "AuthMutator@register")
+
+    login(
+        email: String!
+        password: String!
+    ): AuthPayload! @field(resolver: "AuthMutator@login")
+    logout(userId: ID!): MessageResponse @field(resolver: "App\\GraphQL\\Mutations\\AuthMutator@logout")
+
+
+     createUserPost(
+        description: String!
+        images: [Upload!]!
+    ): UserPostResponse! @field(resolver: "UserPostMutator@create")
+
+updateUserPost(
+        id: ID!
+        description: String
+        images: [Upload]
+    ): UserPostResponse! @field(resolver: "UserPostMutator@update")
+
+    deleteUserPost(
+        id: ID!
+    ): DeleteUserPostResponse! @field(resolver: "UserPostMutator@delete")
+
+    createComment(
+        user_post_id: ID!
+        master_comment_id: ID
+        content: String!
+    ): CommentResponse! @field(resolver: "CommentMutator@create")
+
+    toggleLike(
+         user_post_id: ID!
+        master_comment_id: ID
+        nested_comment_id: ID
+    ): LikeResponse! @field(resolver: "LikeMutator@toggle")
+
+    sendFriendRequest(receiver_id: ID!): FriendRequestResponse! @field(resolver: "ConnectionMutator@sendRequest")
+    unfriend(user_id: ID!): ConnectionResponse! @field(resolver: "ConnectionMutator@unfriend")
+
+    respondToFriendRequest(
+        connection_id: ID!
+        accept: Boolean!
+    ): ConnectionResponse! @field(resolver: "ConnectionMutator@respondToRequest")
+
+    forgotPassword(email: String!): MessageResponse! @field(resolver: "PasswordResetMutator@forgotPassword")
+    validateOTP(otp: String!): MessageResponse! @field(resolver: "PasswordResetMutator@validateOTP")
+    setNewPassword(email: String!, password: String!, password_confirmation: String!): MessageResponse! @field(resolver: "PasswordResetMutator@setNewPassword")
+
+}
+type UserProfile {
+    id: ID!
+    user_id: ID!
+    user: User! @belongsTo
+    avatar_path: String
+    banner_path: String
+    location: String
+    about_user: String
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type UserProfileResponse {
+    status: Boolean!
+    message: String!
+    userProfile: UserProfile
+}
+
+type DeleteUserProfileResponse {
+    status: Boolean!
+    message: String!
+}
+
+extend type Mutation {
+    updateUserProfile(
+        avatar: Upload,
+        banner: Upload,
+        location: String,
+        about_user: String
+    ): UserProfileResponse! @field(resolver: "UserProfileMutator@update")
+    
+    deleteUserProfile: DeleteUserProfileResponse! @field(resolver: "UserProfileMutator@delete")
+}
+
