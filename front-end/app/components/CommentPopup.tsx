@@ -113,6 +113,29 @@ const CommentPopup = ({ post, onClose }: { post: any; onClose: () => void }) => 
   const userAvatar = user?.userProfile?.avatar_path
     ? `https://hyscaler-social-app.s3.eu-north-1.amazonaws.com/${user.userProfile.avatar_path}`
     : "/default-avatar.png"; // Default avatar if none is available
+    const renderImageGrid = (images: string[]) => {
+      return (
+        <div className="grid grid-cols-2 gap-1 relative">
+          {images.slice(0, 4).map((image: string, index: number) => (
+            <div key={index} className="relative">
+              <img
+                src={`https://hyscaler-social-app.s3.eu-north-1.amazonaws.com/${image}`}
+                alt="Post image"
+                className="w-full h-32 object-cover rounded-lg"
+              />
+              {index === 3 && images.length > 4 && (
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
+                  <span className="text-white text-lg font-bold">
+                    +{images.length - 4}
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    };
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -121,30 +144,29 @@ const CommentPopup = ({ post, onClose }: { post: any; onClose: () => void }) => 
           theme === "dark" ? "bg-gray-800 text-white" : "bg-neutral-100 text-black"
         }`}
       >
-        {/* Header */}
-        <div className="relative flex justify-center items-center p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-bold">{post.user.name}'s Post</h2>
-          <div onClick={onClose} className="absolute right-4 top-4 cursor-pointer">
-            <XMarkIcon
-              className={`w-6 h-6 ${
-                theme === "dark"
-                  ? "text-gray-400 hover:text-gray-200"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            />
-          </div>
-        </div>
+{/* Header */}
+<div className="relative flex justify-center items-center p-4 border-b border-gray-200 dark:border-gray-700">
+  <h2 className="text-xl font-bold">{post.user?.name ? `${post.user.name}'s Post` : "User's Post"}</h2>
+  <div onClick={onClose} className="absolute right-4 top-4 cursor-pointer">
+    <XMarkIcon
+      className={`w-6 h-6 ${
+        theme === "dark"
+          ? "text-gray-400 hover:text-gray-200"
+          : "text-gray-500 hover:text-gray-700"
+      }`}
+    />
+  </div>
+</div>
+
 
         {/* Post Description */}
         <div className="p-4">
           <p className="mb-2">{post.description}</p>
-          {post.image_path && (
-            <img
-              src={`https://hyscaler-social-app.s3.eu-north-1.amazonaws.com/${post.image_path}`}
-              alt="Post"
-              className="w-full h-64 object-cover rounded-lg mb-2"
-            />
-          )}
+          {post.image_paths.length === 1 ? (
+        <img src={`https://hyscaler-social-app.s3.eu-north-1.amazonaws.com/${post.image_paths[0]}`} alt="Post" className="w-full h-64 object-cover rounded-lg mb-2" />
+      ) : (
+        renderImageGrid(post.image_paths)
+      )}
         </div>
 
         {/* Comments Section */}

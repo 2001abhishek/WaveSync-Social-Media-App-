@@ -33,7 +33,7 @@ const GET_USER_POSTS = gql`
     userPosts(user_id: $userId) {
       id
       description
-      image_path
+      image_paths
       created_at
     }
   }
@@ -305,9 +305,9 @@ function Page() {
               <div key={post.id} className={`${themeStyles.card} rounded-lg p-4 shadow`}>
                 <p className={`${themeStyles.text.muted} mb-2 text-sm md:text-base`}>{moment(post.created_at).fromNow()}</p>
                 <p className={`${themeStyles.text.secondary} mb-2 text-sm md:text-base`}>{post.description}</p>
-                {post.image_path && (
+                {post.image_paths && (
                   <Image
-                    src={`https://hyscaler-social-app.s3.eu-north-1.amazonaws.com/${post.image_path}`}
+                    src={`https://hyscaler-social-app.s3.eu-north-1.amazonaws.com/${post.image_paths}`}
                     alt="Post Image"
                     width={300}
                     height={200}

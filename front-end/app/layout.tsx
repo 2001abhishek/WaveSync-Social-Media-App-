@@ -10,6 +10,9 @@ import { usePathname } from 'next/navigation';
 import { Provider } from 'react-redux'; // Import Redux Provider
 import { store } from './store'; // Import the Redux store
 import { Toaster, toast } from 'sonner'
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 
 
 export default function RootLayout({
