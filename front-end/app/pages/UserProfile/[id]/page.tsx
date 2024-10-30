@@ -25,7 +25,7 @@ const USER_PROFILE_QUERY = gql`
         }
         posts {
           description
-          image_path
+          image_paths
           created_at
         }
       }
