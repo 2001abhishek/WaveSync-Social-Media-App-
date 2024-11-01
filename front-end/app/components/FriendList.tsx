@@ -143,11 +143,15 @@ const FriendList: React.FC = () => {
                 onClick={() => navigateToProfile(friend.id)}
                   src={avatar} 
                   alt={`${friend.name}'s avatar`} 
-                  className="h-8 w-8 md:h-10 md:w-10 rounded-full mr-2 object-cover" // Adjust avatar size for mobile
+                  className="cursor-pointer h-8 w-8 md:h-10 md:w-10 rounded-full mr-2 object-cover" // Adjust avatar size for mobile
                 />
-                <div className="flex-1">
-                  <p className="font-semibold">{friend.name}</p>
-                  <p className={`truncate ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{about}</p>
+                <div className="flex-1 cursor-pointer">
+                  <p className="font-semibold"
+                                  onClick={() => navigateToProfile(friend.id)}
+                                  >{friend.name}</p>
+                  <p
+                                  onClick={() => navigateToProfile(friend.id)}
+                                  className={`truncate ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{about}</p>
                   <p className="text-sm flex items-center">
                     {friend.activation_status ? (
                       <span className="text-green-500 text-sm flex items-center">

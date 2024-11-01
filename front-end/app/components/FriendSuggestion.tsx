@@ -4,6 +4,7 @@ import { useUser } from "../context/UserContext";
 import { useMutation, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { Toaster, toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 // GraphQL query to fetch friend suggestions
 const FRIEND_SUGGESTIONS_QUERY = gql`
@@ -19,6 +20,7 @@ const FRIEND_SUGGESTIONS_QUERY = gql`
     }
   }
 `;
+
 // GraphQL mutation to send friend request
 const SEND_FRIEND_REQUEST_MUTATION = gql`
   mutation SendFriendRequest($receiverId: ID!) {
@@ -41,10 +43,12 @@ interface FriendSuggestionData {
   name: string;
   userProfile: UserProfile;
 }
+
 const FriendSuggestion = () => {
   const { theme } = useUser();
   const [suggestions, setSuggestions] = useState<FriendSuggestionData[]>([]); // Store friend suggestions
   const [loadedSuggestions, setLoadedSuggestions] = useState<number[]>([]);
+  const router = useRouter();
 
   // Fetch friend suggestions using Apollo Client
   const { data, loading, error } = useQuery(FRIEND_SUGGESTIONS_QUERY, {
@@ -52,6 +56,7 @@ const FriendSuggestion = () => {
       setSuggestions(data.friendSuggestions); // Initialize suggestions state
     }
   });
+
   // Mutation to send friend request
   const [sendFriendRequest] = useMutation(SEND_FRIEND_REQUEST_MUTATION, {
     onCompleted: (data) => {
@@ -62,6 +67,7 @@ const FriendSuggestion = () => {
       }
     }
   });
+
   // Handle friend request action
   const handleSendRequest = (receiverId: number) => {
     sendFriendRequest({ variables: { receiverId } });
@@ -71,6 +77,11 @@ const FriendSuggestion = () => {
       prevSuggestions.filter((suggestion) => suggestion.id !== receiverId)
     );
   };
+
+  const navigateToProfile = (userId: number) => {
+    router.push(`/pages/UserProfile/${userId}`);
+  };
+
   useEffect(() => {
     if (data && data.friendSuggestions) {
       const timerIds: number[] = data.friendSuggestions.map((suggestion: FriendSuggestionData, index: number) => {
@@ -85,6 +96,7 @@ const FriendSuggestion = () => {
       };
     }
   }, [data]);
+
   if (loading) {
     return (
       <div className={`rounded-lg shadow-md h-[85vh] w-full md:w-[24vw] p-4 ${theme === 'dark' ? 'bg-gray-800' : 'bg-neutral-100'}`}>
@@ -110,7 +122,9 @@ const FriendSuggestion = () => {
       </div>
     );
   }
+
   if (error) return <p>Error loading suggestions.</p>;
+
   return (
     <div className={`rounded-lg shadow-md h-[85vh] 
       w-full md:w-[24vw] p-4 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-neutral-100 text-black'}`}> {/* Responsive width */}
@@ -126,9 +140,10 @@ const FriendSuggestion = () => {
               <img
                 src={`https://hyscaler-social-app.s3.eu-north-1.amazonaws.com/${suggestion.userProfile?.avatar_path}`}
                 alt={`${suggestion.name}'s avatar`}
-                className="h-8 w-8 md:h-10 md:w-10 rounded-full mr-2 object-cover" // Adjust avatar size for mobile
+                className="h-8 w-8 md:h-10 md:w-10 rounded-full mr-2 object-cover cursor-pointer"
+                onClick={() => navigateToProfile(suggestion.id)} // Navigate on avatar click
               />
-              <div className="flex-1">
+              <div className="flex-1 cursor-pointer" onClick={() => navigateToProfile(suggestion.id)}> {/* Navigate on name click */}
                 <p className="font-semibold">{suggestion.name}</p>
                 <p className={`truncate ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                   {suggestion.userProfile?.about_user.split(" ").slice(0, 4).join(" ") + 
@@ -148,7 +163,6 @@ const FriendSuggestion = () => {
       </div>
     </div>
   );
-  };
-  
-  export default FriendSuggestion;
-  
+};
+
+export default FriendSuggestion;

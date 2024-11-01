@@ -1,7 +1,7 @@
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { useUser } from "../context/UserContext";
 import { useEffect, useState } from "react";
-import {HeartIcon as HeartIconSolid,} from "@heroicons/react/24/solid";
+import { HeartIcon as HeartIconSolid, } from "@heroicons/react/24/solid";
 import { ChatBubbleLeftIcon, ShareIcon, HeartIcon as HeartIconOutline, } from "@heroicons/react/24/outline";
 import CommentPopup from "./CommentPopup";
 import { useDispatch, useSelector } from "react-redux";
@@ -169,21 +169,21 @@ const PostCard = () => {
             <div className="h-3 bg-gray-300 rounded w-16"></div>
           </div>
         </div>
-  
+
         {/* Post Description */}
         <div className="h-4 bg-gray-300 rounded mb-2 w-3/4"></div>
-  
+
         {/* Post Image */}
         <div className="w-full h-64 bg-gray-300 rounded mb-2"></div>
-  
+
         {/* Like and Comment Count */}
         <div className="flex justify-between text-sm mb-2">
           <div className="h-4 bg-gray-300 rounded w-12"></div>
           <div className="h-4 bg-gray-300 rounded w-16"></div>
         </div>
-  
+
         <hr className="my-2 border-gray-400" />
-  
+
         {/* Post Actions (Like, Comment, Share) */}
         <div className="flex justify-between items-center ml-12">
           <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
@@ -224,9 +224,9 @@ const PostCard = () => {
     setSelectedImages(fullUrls);
     setIsImageSlideOpen(true);
   };
-    
 
-  
+
+
   if (error) return <p>Error fetching posts!</p>;
 
   return (
@@ -246,9 +246,8 @@ const PostCard = () => {
           return (
             <div
               key={post.id}
-              className={`max-w-2xl mx-auto p-4 rounded-lg shadow-lg mb-4 z-50 ${
-                theme === "dark" ? "bg-gray-800 text-white" : "bg-neutral-200 text-black"
-              }`}
+              className={`max-w-2xl mx-auto p-4 rounded-lg shadow-lg mb-4 z-50 ${theme === "dark" ? "bg-gray-800 text-white" : "bg-neutral-200 text-black"
+                }`}
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center">
@@ -303,17 +302,17 @@ const PostCard = () => {
 
               {/* Render either a single image or image grid */}
               {post.image_paths.length === 1 ? (
-  <img
-    src={`https://hyscaler-social-app.s3.eu-north-1.amazonaws.com/${post.image_paths[0]}`}
-    alt="Post"
-    className="w-full h-64 object-cover rounded-lg mb-2 cursor-pointer"
-    onClick={() => handleImageClick(post.image_paths)}
-  />
-) : (
-  <div onClick={() => handleImageClick(post.image_paths)} className="cursor-pointer">
-    {renderImageGrid(post.image_paths)}
-  </div>
-)}
+                <img
+                  src={`https://hyscaler-social-app.s3.eu-north-1.amazonaws.com/${post.image_paths[0]}`}
+                  alt="Post"
+                  className="w-full h-64 object-cover rounded-lg mb-2 cursor-pointer"
+                  onClick={() => handleImageClick(post.image_paths)}
+                />
+              ) : (
+                <div onClick={() => handleImageClick(post.image_paths)} className="cursor-pointer">
+                  {renderImageGrid(post.image_paths)}
+                </div>
+              )}
 
 
               <div className="flex mt-4 justify-between text-sm mb-2">
