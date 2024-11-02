@@ -38,7 +38,7 @@ const UserFeed = () => {
   // }
 
   return (
-    <div className={`${theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-black"} min-h-screen relative custom-scrollbar`}>
+    <div className={`${theme === "dark" ? "bg-gray-700 text-white" : "bg-white text-black"} min-h-screen relative custom-scrollbar`}>
       <Toaster position="top-right" />
       <div className="flex flex-col lg:flex-row">
         {/* Left Side: FriendList */}

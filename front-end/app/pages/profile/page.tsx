@@ -9,6 +9,11 @@ import { PencilIcon, BriefcaseIcon, HomeIcon, UserGroupIcon } from '@heroicons/r
 import EditProfileForm from '@/app/components/EditProfileForm';
 import CreatePost from "../../components/CreatePost";
 import FriendList from "../../components/FriendList";
+import ImageSlide from "../../components/ImageSlide"
+import ImageGrid from "../../components/ImageGrid"
+import EditPostModal from '../../components/EditPostModal';
+
+
 
 // GraphQL queries remain the same
 const GET_USER_PROFILE = gql`
@@ -40,6 +45,10 @@ const GET_USER_POSTS = gql`
 `;
 
 function Page() {
+  const [selectedPost, setSelectedPost] = useState<any>(null);
+
+  const [isEditing, setIsEditing] = useState(false);
+
   const [userId, setUserId] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const { loading, error, data, refetch } = useQuery(GET_USER_PROFILE, {
@@ -51,6 +60,14 @@ function Page() {
     skip: !userId,
   });
   const { theme } = useUser();
+  const [isImageSlideOpen, setIsImageSlideOpen] = useState(false);
+const [selectedImages, setSelectedImages] = useState<string[]>([]);
+// Add this handler in your Page component
+const handleImageClick = (images: string[]) => {
+  setSelectedImages(images);
+  setIsImageSlideOpen(true);
+};
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -100,7 +117,7 @@ function Page() {
 
   // Enhanced theme-based styling
   const themeStyles = {
-    background: theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50',
+    background: theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50',
     card: theme === 'dark' ? 'bg-gray-800' : 'bg-white',
     text: {
       primary: theme === 'dark' ? 'text-gray-100' : 'text-gray-900',
@@ -112,6 +129,17 @@ function Page() {
       primary: theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
     }
   };
+  const handleEditClick = (post: any) => {
+    setSelectedPost(post);
+    setIsEditing(true);
+  };
+  const closeModal = () => {
+    setIsEditing(false);
+    setSelectedPost(null);
+    // Refetch posts after editing
+    refetch();
+  };
+  
 
   if (loading || postLoading) return (
     <div className={`${themeStyles.background} min-h-screen`}>
@@ -299,24 +327,57 @@ function Page() {
             </div>
           </div>
 
-          {/* Posts Section */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
-            {postData?.userPosts.map((post) => (
-              <div key={post.id} className={`${themeStyles.card} rounded-lg p-4 shadow`}>
-                <p className={`${themeStyles.text.muted} mb-2 text-sm md:text-base`}>{moment(post.created_at).fromNow()}</p>
-                <p className={`${themeStyles.text.secondary} mb-2 text-sm md:text-base`}>{post.description}</p>
-                {post.image_paths && (
-                  <Image
-                    src={`https://hyscaler-social-app.s3.eu-north-1.amazonaws.com/${post.image_paths}`}
-                    alt="Post Image"
-                    width={300}
-                    height={200}
-                    className="rounded-lg w-full"
-                  />
-                )}
-              </div>
-            ))}
-          </div>
+       {/* Posts Section */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+  {postData?.userPosts.map((post) => (
+    <div key={post.id} className={`${themeStyles.card} rounded-lg p-4 shadow relative group`}>
+      {/* Edit Button */}
+      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div
+          className="group flex items-center cursor-pointer hover:gap-2 transition-all duration-200"
+          onClick={() => handleEditClick(post)}
+        >
+          <span className={`${themeStyles.text.secondary} max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-[4rem] transition-all duration-200`}>
+            Edit
+          </span>
+          <PencilIcon className={`${themeStyles.text.secondary} h-5 w-5 text-gray-600  dark:text-gray-400 `} />
+        </div>
+      </div>
+
+      {/* Post Content */}
+      <div className="mt-4">
+        <p className={`${themeStyles.text.muted} mb-2 text-sm md:text-base`}>
+          {moment(post.created_at).fromNow()}
+        </p>
+        <p className={`${themeStyles.text.secondary} mb-2 text-sm md:text-base`}>
+          {post.description}
+        </p>
+        {post.image_paths && Array.isArray(post.image_paths) && (
+          <ImageGrid
+            images={post.image_paths}
+            onImageClick={handleImageClick}
+            className="mt-2"
+          />
+        )}
+      </div>
+    </div>
+  ))}
+</div>
+
+{/* Image Slide Modal */}
+<ImageSlide
+  images={selectedImages}
+  isOpen={isImageSlideOpen}
+  onClose={() => setIsImageSlideOpen(false)}
+/>
+
+{/* Edit Post Modal */}
+{isEditing && selectedPost && (
+  <EditPostModal 
+    post={selectedPost} 
+    onClose={closeModal}
+  />
+)}
         </div>
       </div>
 

@@ -115,7 +115,7 @@ const FriendList: React.FC = () => {
 
   return (
     <div className={`rounded-lg h-[85vh] shadow-md p-4 
-        ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-neutral-100 text-black'} 
+        ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-neutral-100 text-black'} 
         w-full md:w-[23vw]`} // Adjust width for mobile and desktop
     >
       <h2 className="font-bold text-lg mb-2">Friends</h2>

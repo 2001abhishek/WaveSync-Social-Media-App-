@@ -104,7 +104,7 @@ const CreatePost = () => {
 
   return (
     <div
-      className={`max-w-2xl mx-auto ${theme === "dark" ? "bg-gray-700" : "bg-gray-200"
+      className={`max-w-2xl mx-auto ${theme === "dark" ? "bg-gray-900" : "bg-gray-200"
         } p-4 rounded-md shadow-md mb-4`}
     >
       <form onSubmit={handleSubmit} className="flex flex-col">
@@ -118,33 +118,37 @@ const CreatePost = () => {
           rows={4}
         />
 
-        <div className="flex flex-wrap items-center mb-2 space-x-2">
-          {images.map((image, index) => (
-            <div key={index} className="relative w-16 h-16 mr-2 mb-2">
-              {/* X icon positioned outside the top-right corner */}
-              <div
-                onClick={() => handleRemoveImage(index)}
-                className="absolute -top-2 -right-2 text-red-500 cursor-pointer transform transition-transform duration-200 hover:scale-125"
-              >
-                <XMarkIcon className="h-5 w-5" />
-              </div>
+<div className="flex flex-wrap gap-4 items-center mb-2">
+  {images.map((image, index) => (
+    <div
+      key={index}
+      className="relative w-16 h-16 border border-gray-900 rounded overflow-hidden"
+    >
+      {/* X icon positioned outside the top-right corner */}
+      <div
+        onClick={() => handleRemoveImage(index)}
+        className="absolute -top-1 -right-1 text-red-500 cursor-pointer transform transition-transform duration-200 hover:scale-125"
+      >
+        <XMarkIcon className="h-5 w-5" />
+      </div>
 
-              {/* Display image preview */}
-              <img
-                src={URL.createObjectURL(image)}
-                alt={`Preview ${index}`}
-                className="w-full h-full object-cover rounded"
-              />
+      {/* Display image preview */}
+      <img
+        src={URL.createObjectURL(image)}
+        alt={`Preview ${index}`}
+        className="w-full h-full object-cover rounded"
+      />
 
-              {/* Image name below the preview */}
-              <span className="block text-center text-xs mt-1">
-                {fileNames[index].length > 10
-                  ? `${fileNames[index].slice(0, 10)}...`
-                  : fileNames[index]}
-              </span>
-            </div>
-          ))}
-        </div>
+      {/* Image name below the preview with padding */}
+      <span className="block text-center text-xs mt-2 px-1">
+        {fileNames[index].length > 10
+          ? `${fileNames[index].slice(0, 10)}...`
+          : fileNames[index]}
+      </span>
+    </div>
+  ))}
+</div>
+
 
 
         <div className="flex items-center mb-2">

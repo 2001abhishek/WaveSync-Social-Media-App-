@@ -143,7 +143,7 @@ const FriendRequests = () => {
 
   return (
     <div className={`rounded-lg shadow-md p-4 h-[85vh] 
-        w-full md:w-[24vw] ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-neutral-100 text-black'}`}> {/* Responsive width */}
+        w-full md:w-[24vw] ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-neutral-100 text-black'}`}> {/* Responsive width */}
         <h2 className="font-bold text-lg mb-2">Friend Requests</h2>
         <div className="max-h-full overflow-y-auto custom-scrollbar flex flex-col h-full">
             <ul className="space-y-8 w-full mt-8">

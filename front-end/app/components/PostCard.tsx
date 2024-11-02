@@ -246,7 +246,7 @@ const PostCard = () => {
           return (
             <div
               key={post.id}
-              className={`max-w-2xl mx-auto p-4 rounded-lg shadow-lg mb-4 z-50 ${theme === "dark" ? "bg-gray-800 text-white" : "bg-neutral-200 text-black"
+              className={`max-w-2xl mx-auto p-4 rounded-lg shadow-lg mb-4 z-50 ${theme === "dark" ? "bg-gray-900 text-white" : "bg-neutral-200 text-black"
                 }`}
             >
               <div className="flex items-center justify-between mb-2">
