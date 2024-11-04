@@ -11,8 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UserLikeResource extends Resource
 {
@@ -31,14 +29,6 @@ class UserLikeResource extends Resource
                     Forms\Components\Select::make('user_post_id')
                     ->relationship('post', 'description')
                     ->required(),
-                Forms\Components\Select::make('master_comment_id')
-                    ->relationship('masterComment', 'content')
-                    ->label('Master Comment')
-                    ->nullable(),
-                Forms\Components\Select::make('nested_comment_id')
-                    ->relationship('nestedComment', 'content')
-                    ->label('Nested Comment')
-                    ->nullable(),
             ]);
     }
 
@@ -49,8 +39,6 @@ class UserLikeResource extends Resource
                 TextColumn::make('id')->sortable(),
                 TextColumn::make('user.name')->label('User')->sortable()->searchable(),
                 TextColumn::make('post.heading')->label('Post')->sortable()->searchable()->default('-'),
-                TextColumn::make('masterComment.content')->label('Master Comment')->sortable()->searchable()->default('-'),
-                TextColumn::make('nestedComment.content')->label('Nested Comment')->sortable()->searchable()->default('-'),
                 TextColumn::make('created_at')->label('Liked At')->dateTime(),
             ])
             ->filters([

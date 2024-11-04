@@ -4,6 +4,7 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\UserPost;
 use App\Models\UserLike;
+use App\Models\UserComment;
 use Illuminate\Support\Facades\DB;
 
 class LikeMutator
@@ -11,33 +12,41 @@ class LikeMutator
     public function toggle($rootValue, array $args, $context)
     {
         $user = $context->user();
-        
+
         if (!$user) {
             return [
                 'status' => false,
-                'message' => "Unauthenticated",            
+                'message' => "Unauthenticated",
             ];
         }
 
-        if (!isset($args['user_post_id'])) {
+        $likeData = [
+            'user_id' => $user->id,
+            'user_post_id' => $args['user_post_id'] ?? null,
+            'user_comment_id' => $args['user_comment_id'] ?? null,
+        ];
+
+        // Validation to ensure at least one of user_post_id or user_comment_id is provided
+        if (is_null($likeData['user_post_id']) && is_null($likeData['user_comment_id'])) {
             return [
                 'status' => false,
-                'message' => "User post ID required",            
+                'message' => "Either user_post_id or user_comment_id is required",
             ];
         }
-        
+
+        DB::beginTransaction();
+
         try {
-            $post = UserPost::findOrFail($args['user_post_id']);
-        
-            $likeData = [
-                'user_id' => $user->id,
-                'user_post_id' => $args['user_post_id'],
-            ];
-        
-            DB::beginTransaction();
-        
+            // Determine the liked item
+            $likedItem = null;
+            if ($likeData['user_post_id']) {
+                $likedItem = UserPost::findOrFail($likeData['user_post_id']);
+            } elseif ($likeData['user_comment_id']) {
+                $likedItem = UserComment::findOrFail($likeData['user_comment_id']);
+            }
+
+            // Toggle the like
             $like = UserLike::where($likeData)->first();
-        
             if ($like) {
                 $like->delete();
                 $liked = false;
@@ -47,23 +56,21 @@ class LikeMutator
                 $liked = true;
                 $message = 'Liked successfully';
             }
-        
+
             DB::commit();
-        
-            $post->refresh();
-        
+
             return [
                 'status' => true,
                 'message' => $message,
-                'likedItem' => $post, // Return the post model
+                'likedItem' => $likedItem,
                 'liked' => $liked,
             ];
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            DB::rollBack();
-            return $this->errorResponse('Invalid ID provided: ' . $e->getMessage());
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->errorResponse('Failed to toggle like: ' . $e->getMessage());
+            return [
+                'status' => false,
+                'message' => 'Failed to toggle like: ' . $e->getMessage(),
+            ];
         }
-    }        
+    }
 }

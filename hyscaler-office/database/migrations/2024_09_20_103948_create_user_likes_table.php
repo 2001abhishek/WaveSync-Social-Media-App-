@@ -12,10 +12,9 @@ class CreateUsersLikesTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_post_id')->nullable()->constrained('user_posts')->onDelete('cascade');
-            $table->foreignId('master_comment_id')->nullable()->constrained('user_comments')->onDelete('cascade');
-            $table->foreignId('nested_comment_id')->nullable()->constrained('nested_comments')->onDelete('cascade');
+            $table->foreignId('user_comment_id')->nullable()->constrained('users_comments')->onDelete('cascade');
             $table->timestamps();
-            $table->unique(['user_id', 'user_post_id', 'master_comment_id', 'nested_comment_id']);
+            $table->unique(['user_id', 'user_post_id', 'master_comment_id']);
         });
     }
 

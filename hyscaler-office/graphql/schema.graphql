@@ -84,7 +84,7 @@ type CommentResponse {
     comment: UserComment
 }
 
-union LikeableItem = UserPost | UserComment | NestedComment
+union LikeableItem = UserPost | UserComment
 
 type LikeResponse {
   status: Boolean!
@@ -168,9 +168,8 @@ updateUserPost(
     ): CommentResponse! @field(resolver: "CommentMutator@create")
 
     toggleLike(
-         user_post_id: ID!
-        master_comment_id: ID
-        nested_comment_id: ID
+         user_post_id: ID
+        user_comment_id: ID
     ): LikeResponse! @field(resolver: "LikeMutator@toggle")
 
     sendFriendRequest(receiver_id: ID!): FriendRequestResponse! @field(resolver: "ConnectionMutator@sendRequest")
